@@ -2,6 +2,17 @@ import requests
 import json
 
 def emotion_detector(text_to_analyse):
+    if not text_to_analyse.strip():
+        return {
+            "anger": None,
+            "disgust": None,
+            "fear": None,
+            "joy": None,
+            "sadness": None,
+            "dominant_emotion": None
+        }
+
+
     url = 'https://sn-watson-emotion.labs.skills.network/v1/watson.runtime.nlp.v1/NlpService/EmotionPredict'
     header = {"grpc-metadata-mm-model-id": "emotion_aggregated-workflow_lang_en_stock"}
     #Input 
@@ -9,7 +20,18 @@ def emotion_detector(text_to_analyse):
 
     # Make a POST request to the API with the payload and headers
     response = requests.post(url, json=myobj, headers=header)
-     # Parsing the JSON response from the API
+
+    if response.status_code == 400:
+        return {
+            "anger": None,
+            "disgust": None,
+            "fear": None,
+            "joy": None,
+            "sadness": None,
+            "dominant_emotion": None
+        }
+
+    # Parsing the JSON response from the API
     formatted_response = json.loads(response.text)    
     
     # Extracting emotions, including anger, disgust, fear, joy and sadness, along with their scores.
